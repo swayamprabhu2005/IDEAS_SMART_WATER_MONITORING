@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Smart Water Monitoring - Dashboard</title>
+
+  <!-- Chart link -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="contact.html">📞 Contact</a>
+  </nav>
+  <div class="header">
+    <h1>Smart Water Monitoring Dashboard</h1>
+    <p>Click on any reading below to see full details and stats.</p>
+  </div>
+
+  <div id="statusMessage" class="status"></div>
+
+  <h2>Latest Water Check</h2>
+  <div class="current-readings">
+    <div class="reading-card" onclick="window.location.href='ph-details.html'">
+      <div class="icon">🧪</div>
+      <h3>Water Quality Level (pH)</h3>
+      <p id="current-pH">--</p>
+      <div class="description">Safe range: 6.5 to 8.5</div>
+    </div>
+    <div class="reading-card" onclick="window.location.href='turbidity-details.html'">
+      <div class="icon">🌊</div>
+      <h3>Cloudiness (Turbidity)</h3>
+      <p id="current-turbidity">-- NTU</p>
+      <div class="description">Safe range: < 5</div>
+    </div>
+  </div>
+  <h2>Water Trends Over Time</h2>
+  <div class="dashboard">
+    <div class="chart-container">
+      <h3>pH Trend</h3>
+      <canvas id="phChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3>Turbidity Trend</h3>
+      <canvas id="turbidityChart"></canvas>
+    </div>
+    <div class="chart-container">
+      <h3>Current Readings Summary</h3>
+      <canvas id="pieChart"></canvas>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Smart Water Monitoring Project © 2026</p>
+    <p>Connect to us:
+      <a href="https://www.linkedin.com/in/amey-kapdi-215390396/" target="_blank">Amey Kapdi</a> | 
+      <a href="https://www.linkedin.com/in/koushik-sharma-656820325/" target="_blank">Koushik Sharma</a> | 
+      <a href="https://www.linkedin.com/in/swayam-prabhu-b1490a287/" target="_blank">Swayam Prabhu</a> | 
+      <a href="https://www.linkedin.com/in/jp-devx/" target="_blank">John Paul Fernandes</a> | 
+      <a href="https://github.com/jpxdevx/IDEAS4.0" target="_blank">GitHub</a> | 
+    </p>
+  </div>
+</body>
+
+  <script type="module" src="dashboard.js"></script>
+</html>

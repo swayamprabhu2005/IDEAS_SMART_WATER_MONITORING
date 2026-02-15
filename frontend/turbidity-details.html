@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Smart Water Monitoring - Turbidity Details</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="turbidity-details.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html">🏠 Home</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="contact.html">📞 Contact</a>
+  </nav>
+
+    <div id="statusMessage" class="status"></div>
+
+  <h1>Turbidity Monitoring Details</h1>
+
+  <div class="chart-container">
+    <h2>Turbidity Trend Over Time</h2>
+    <canvas id="turbidityDetailChart"></canvas>
+  </div>
+
+  <div class="suggestions">
+    <h2>Suggested Uses</h2>
+    <ul id="suggestionList"></ul>
+  </div>
+
+  <div class="info">
+    <h2>Why Turbidity Matters</h2>
+    <p>Turbidity measures how cloudy or hazy water is due to suspended particles. High turbidity can indicate contamination from soil, waste, or microorganisms. 
+    According to WHO guidelines, drinking water should have turbidity less than <strong>5 NTU</strong>. 
+    Clear water is not only safer to drink but also more effective for disinfection processes like chlorination.</p>
+  </div>
+
+  <div class="footer">
+    <p>Smart Water Monitoring Project © 2026</p>
+    <p>Connect to us:
+      <a href="https://www.linkedin.com/in/amey-kapdi-215390396/" target="_blank">Amey Kapdi</a> | 
+      <a href="https://www.linkedin.com/in/koushik-sharma-656820325/" target="_blank">Koushik Sharma</a> | 
+      <a href="https://www.linkedin.com/in/swayam-prabhu-b1490a287/" target="_blank">Swayam Prabhu</a> | 
+      <a href="https://www.linkedin.com/in/jp-devx/" target="_blank">John Paul Fernandes</a> | 
+      <a href="https://github.com/jpxdevx/IDEAS4.0" target="_blank">GitHub</a> | 
+    </p>
+  </div>
+</body>
+
+<script type="module" src="turbidity-details.js"></script>
+</html>
