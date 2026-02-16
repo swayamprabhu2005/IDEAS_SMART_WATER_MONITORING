@@ -1,91 +1,55 @@
-import { sensorReadings, evaluateWaterSafety } from "./sensorData.js";
+let turbidityChart;
 
-let currentIndex = 0, turbidityChart;
-
-function initChart() 
-{
-  const ctx = document.getElementById('turbidityDetailChart').getContext('2d');
-
-  turbidityChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Turbidity (NTU)',
-        data: [],
-        backgroundColor: '#4caf50'
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: (ctx) => `Turbidity: ${ctx.parsed.y.toFixed(2)} NTU`
-          }
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'NTU' }
-        }
-      }
-    }
-  });
+async function fetchData() {
+    const res = await fetch("/api/readings");
+    return await res.json();
 }
 
-function checkSafety(latestReading) 
-{
+function initChart() {
+    const ctx = document.getElementById('turbidityDetailChart').getContext('2d');
+
+    turbidityChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Turbidity (NTU)',
+                data: [],
+                backgroundColor: '#4caf50'
+            }]
+        }
+    });
+}
+
+function evaluateWaterSafety(reading) {
+    return reading.turbidity < 5;
+}
+
+async function updateChart() {
+    const data = await fetchData();
+    if (!data || data.length === 0) return;
+
+    const recent = data.slice(-10);
+    const latest = recent[recent.length - 1];
+
+    const labels = recent.map(d => new Date(d.timestamp).toLocaleTimeString());
+    const turbidityData = recent.map(d => d.turbidity);
+
+    turbidityChart.data.labels = labels;
+    turbidityChart.data.datasets[0].data = turbidityData;
+    turbidityChart.update();
+
+    // Safety display
     const statusDiv = document.getElementById('statusMessage');
-    const suggestionList = document.getElementById('suggestionList');
-    suggestionList.innerHTML = "";
-
-    const safety = evaluateWaterSafety(latestReading)
-
-    statusDiv.textContent = safety.message + `. Turbidity: ${latestReading.turbidity.toFixed(2)}`;
-    statusDiv.className = safety.safe ? "status safe" : "status unsafe";
-
-    if(safety.safe)
-    {
-        suggestionList.innerHTML += "<li>Safe for drinking</li>";
-        suggestionList.innerHTML += "<li>Safe for cooking and utensils</li>";
-        suggestionList.innerHTML += "<li>Safe for irrigation</li>";
+    if (evaluateWaterSafety(latest)) {
+        statusDiv.textContent = "✅ Water is SAFE. Turbidity: " + latest.turbidity.toFixed(2) + " NTU";
+        statusDiv.className = "status safe";
+    } else {
+        statusDiv.textContent = "⚠️ Water NOT safe. Turbidity: " + latest.turbidity.toFixed(2) + " NTU";
+        statusDiv.className = "status unsafe";
     }
-
-    else
-    {
-        suggestionList.innerHTML += "<li>Use for irrigation (plants tolerate higher turbidity)</li>";
-        suggestionList.innerHTML += "<li>Use for cleaning or washing utensils</li>";
-        suggestionList.innerHTML += "<li>Industrial or construction applications</li>";
-    }
-}
-
-function loadNextReading() 
-{
-  if (currentIndex < sensorReadings.length) 
-    {
-        const reading = sensorReadings[currentIndex];
-
-        // Add new label and value
-        turbidityChart.data.labels.push(new Date(reading.timestamp).toLocaleTimeString());
-        turbidityChart.data.datasets[0].data.push(reading.turbidity);
-
-        // Keep only the last 10 values (sliding window)
-        if (turbidityChart.data.labels.length > 10) {
-        turbidityChart.data.labels.shift();
-        turbidityChart.data.datasets[0].data.shift();
-        }
-
-        turbidityChart.update();
-
-        checkSafety(sensorReadings[currentIndex]);
-
-        currentIndex++;
-    } 
 }
 
 initChart();
-// checkSafety();
-loadNextReading();
-setInterval(loadNextReading, 10000);
+updateChart();
+setInterval(updateChart, 2000);
