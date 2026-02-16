@@ -4,31 +4,55 @@ const kmeans = require("../utils/kmeans");
 
 const router = express.Router();
 
-// ESP32 sends data here
+// ESP32 sends real data here
 router.post("/data", async (req, res) => {
-    const { pH, turbidity } = req.body;
+    try {
+        const { pH, turbidity } = req.body;
 
-    const newReading = new Reading({ pH, turbidity });
-    await newReading.save();
+        // FIXED VALIDATION
+        if (pH === undefined || turbidity === undefined) {
+            return res.status(400).json({ message: "Invalid sensor data" });
+        }
 
-    // Get last 20 readings
-    const recent = await Reading.find().sort({ timestamp: -1 }).limit(20);
+        console.log("New Reading:", pH, turbidity);
 
-    // Run KMeans
-    const clustered = kmeans(recent);
+        const newReading = new Reading({ pH, turbidity });
+        await newReading.save();
 
-    // Update cluster values in DB
-    for (let item of clustered) {
-        await Reading.findByIdAndUpdate(item._id, { cluster: item.cluster });
+        const recent = await Reading.find()
+            .sort({ timestamp: -1 })
+            .limit(20);
+
+        const clustered = kmeans(recent);
+
+        for (let item of clustered) {
+            await Reading.findByIdAndUpdate(item._id, {
+                cluster: item.cluster
+            });
+        }
+
+        res.json({ message: "Data stored and clustered successfully" });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server Error" });
     }
-
-    res.json({ message: "Data stored and clustered" });
 });
+
 
 // Frontend fetches data here
 router.get("/readings", async (req, res) => {
-    const readings = await Reading.find().sort({ timestamp: 1 }).limit(50);
-    res.json(readings);
+    try {
+        const readings = await Reading.find()
+            .sort({ timestamp: 1 })
+            .limit(50);
+
+        res.json(readings);
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Server Error" });
+    }
 });
 
 module.exports = router;
