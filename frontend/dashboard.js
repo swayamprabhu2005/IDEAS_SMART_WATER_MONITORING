@@ -1,8 +1,13 @@
 let phChart, turbidityChart, pieChart;
 
 async function fetchData() {
-    const res = await fetch("http://localhost:5000/api/readings");
-    return await res.json();
+    try {
+        const res = await fetch("/api/readings");
+        return await res.json();
+    } catch (error) {
+        console.error("Fetch error:", error);
+        return [];
+    }
 }
 
 function evaluateWaterSafety(latest) {
@@ -66,22 +71,22 @@ async function updateDashboard() {
     const recentData = data.slice(-10);
     const latest = recentData[recentData.length - 1];
 
-    // Update current readings
     document.getElementById('current-pH').textContent = latest.pH.toFixed(2);
-    document.getElementById('current-turbidity').textContent = latest.turbidity.toFixed(2) + " NTU";
+    document.getElementById('current-turbidity').textContent =
+        latest.turbidity.toFixed(2) + " NTU";
 
-    // Update safety
     const statusDiv = document.getElementById('statusMessage');
     const safety = evaluateWaterSafety(latest);
     statusDiv.textContent = safety.message;
     statusDiv.className = safety.safe ? "status safe" : "status unsafe";
 
-    // Prepare chart data
-    const labels = recentData.map(d => new Date(d.timestamp).toLocaleTimeString());
+    const labels = recentData.map(d =>
+        d.timestamp ? new Date(d.timestamp).toLocaleTimeString() : ""
+    );
+
     const phData = recentData.map(d => d.pH);
     const turbidityData = recentData.map(d => d.turbidity);
 
-    // Update charts
     phChart.data.labels = labels;
     phChart.data.datasets[0].data = phData;
     phChart.update();

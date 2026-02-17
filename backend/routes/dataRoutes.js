@@ -1,15 +1,13 @@
-const express = require("express");
+const express = require("express"); 
 const Reading = require("../models/Reading");
 const kmeans = require("../utils/kmeans");
 
 const router = express.Router();
 
-// ESP32 sends real data here
 router.post("/data", async (req, res) => {
     try {
         const { pH, turbidity } = req.body;
 
-        // FIXED VALIDATION
         if (pH === undefined || turbidity === undefined) {
             return res.status(400).json({ message: "Invalid sensor data" });
         }
@@ -39,8 +37,6 @@ router.post("/data", async (req, res) => {
     }
 });
 
-
-// Frontend fetches data here
 router.get("/readings", async (req, res) => {
     try {
         const readings = await Reading.find()
