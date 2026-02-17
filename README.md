@@ -29,6 +29,7 @@ Sensors → ESP32 → WiFi → HTTP POST → Backend Server → MongoDB → Dash
 II) Frontend Dashboard
 
 Built using: 
+
 i. HTML
 
 ii. CSS
