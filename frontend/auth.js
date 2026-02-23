@@ -7,10 +7,6 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let isLoggedIn = false;
 let currentUser = null;
 
-/* ======================
-   HELPERS
-====================== */
-
 function pickColorFromString(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
@@ -49,10 +45,6 @@ function createAvatarHtml(user) {
   return `<div class="avatar-fallback" style="background:${bg}">${letter}</div>`;
 }
 
-/* ======================
-   PAGE GUARD (REAL PROTECTION)
-====================== */
-
 async function guardProtectedPage() {
   if (!document.body.dataset.protectedPage) return;
 
@@ -65,14 +57,9 @@ async function guardProtectedPage() {
   }
 }
 
-/* ======================
-   NAV + LINK PROTECTION
-====================== */
-
 function applyNavState(user) {
   const loginBtnEl = document.querySelector(".login-btn");
 
-  /* ---- protect links/cards ---- */
   const links = document.querySelectorAll(".protected-link");
 
   links.forEach((el) => {
@@ -82,7 +69,6 @@ function applyNavState(user) {
           e.preventDefault();
           e.stopPropagation();
 
-          // kill inline onclick navigation
           if (el.onclick) {
             el.onclick = null;
           }
@@ -95,7 +81,6 @@ function applyNavState(user) {
     }
   });
 
-  // if page has no login button, skip nav logic safely
   if (!loginBtnEl) return;
 
   const newBtn = loginBtnEl.cloneNode(false);
@@ -176,10 +161,6 @@ function applyNavState(user) {
   }
 }
 
-/* ======================
-   AUTH STATE
-====================== */
-
 async function refreshAuthState() {
   try {
     const {
@@ -198,10 +179,6 @@ function subscribeAuthChanges() {
     applyNavState(user);
   });
 }
-
-/* ======================
-   INIT
-====================== */
 
 document.addEventListener("DOMContentLoaded", async () => {
   await guardProtectedPage();
