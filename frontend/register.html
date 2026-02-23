@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register | The Urban Planting</title>
+    <link rel="stylesheet" href="logreg.css" />
+  </head>
+
+  <body class="register-bg">
+    <div class="form-container">
+      <h2>Register</h2>
+
+      <form>
+        <label for="name">Full Name</label>
+        <input
+          type="text"
+          id="name"
+          placeholder="Enter your full name"
+          required
+        />
+
+        <label for="email">Email ID</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+        />
+
+        <!-- NEW PHONE FIELD -->
+        <label for="phone">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          placeholder="Enter 10-digit phone number"
+          maxlength="10"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter a strong password"
+          required
+        />
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          placeholder="Re-enter your password"
+          required
+        />
+
+        <button type="submit" class="btn">Register</button>
+      </form>
+
+      <hr />
+
+      <p class="note">
+        Already have an account?
+        <a href="login.html">Login here</a>
+      </p>
+    </div>
+
+    <script type="module" src="register.js"></script>
+  </body>
+</html>
