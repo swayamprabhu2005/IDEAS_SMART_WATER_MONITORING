@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Water Bot</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      /* ===== Chat bubble ===== */
+      #chat-bubble {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        width: 70px;
+        height: 70px;
+        cursor: pointer;
+        z-index: 9999;
+      }
+
+      #chat-bubble img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      /* ===== Chat panel ===== */
+      #chat-panel {
+        position: fixed;
+        bottom: 110px;
+        right: 25px;
+        width: 340px;
+        height: 420px;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+        background: white;
+        display: none;
+        z-index: 9998;
+      }
+
+      #chat-panel iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ===== Chat Bubble ===== -->
+    <div id="chat-bubble">
+      <img src="./Photos/chat-icon.png" alt="Chat" />
+    </div>
+
+    <!-- ===== Chat Window ===== -->
+    <div id="chat-panel">
+      <iframe
+        src="https://www.chatbase.co/chatbot-iframe/zWMS5_AcKiMajMHgyDz0R"
+        frameborder="0"
+      >
+      </iframe>
+    </div>
+
+    <script>
+      const bubble = document.getElementById("chat-bubble");
+      const panel = document.getElementById("chat-panel");
+
+      bubble.onclick = () => {
+        panel.style.display =
+          panel.style.display === "block" ? "none" : "block";
+      };
+    </script>
+  </body>
+</html>
