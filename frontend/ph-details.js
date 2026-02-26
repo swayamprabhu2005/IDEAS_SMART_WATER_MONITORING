@@ -9,14 +9,14 @@ function initChart() {
     const ctx = document.getElementById('phDetailChart').getContext('2d');
 
     phChart = new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: {
             labels: [],
             datasets: [{
                 label: 'pH Level',
                 data: [],
                 borderColor: '#005f99',
-                backgroundColor: 'rgba(0,95,153,0.1)',
+                backgroundColor: 'rgba(0, 94, 153, 0.96)',
                 fill: true
             }]
         }
@@ -31,6 +31,8 @@ async function updateChart() {
     
     const data = await fetchData();
     if (!data || data.length === 0);
+
+    const ordered = data.reverse();
 
     console.log("Inside fn");
     const recent = data.slice(-10);

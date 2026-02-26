@@ -1,28 +1,29 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-body.login-bg,
 body.register-bg {
   font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
   margin: 0;
-  background: linear-gradient(135deg, #003366, #005f99);
+  background: linear-gradient(135deg, #004d40, #00796b); /* teal gradient */
+  min-height: 100vh; /* ensures gradient covers full height */
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
+/* Centered card */
 .form-container {
   background: white;
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 51, 102, 0.2);
-  width: 350px;
+  width: 380px;
   text-align: center;
+  margin-top: 40px; /* adds breathing space from top */
 }
 
 .form-container h2 {
   margin-bottom: 20px;
-  color: #003366;
+  color: #004d40;
   font-weight: 600;
 }
 
@@ -36,7 +37,7 @@ label {
   text-align: left;
   font-size: 14px;
   font-weight: 600;
-  color: #003366;
+  color: #004d40;
 }
 
 input[type="text"],
@@ -47,16 +48,17 @@ input[type="password"] {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 14px;
-  transition: border 0.3s;
+  transition: border 0.3s, box-shadow 0.3s;
 }
 
 input:focus {
-  border-color: #005f99;
+  border-color: #00796b;
+  box-shadow: 0 0 5px rgba(0, 121, 107, 0.5);
   outline: none;
 }
 
 .btn {
-  background: #005f99;
+  background: #00796b;
   color: white;
   border: none;
   padding: 12px;
@@ -68,7 +70,7 @@ input:focus {
 }
 
 .btn:hover {
-  background: #007acc;
+  background: #009688;
 }
 
 hr {
@@ -83,7 +85,7 @@ p.note {
 }
 
 p.note a {
-  color: #005f99;
+  color: #00796b;
   text-decoration: none;
   font-weight: 600;
 }

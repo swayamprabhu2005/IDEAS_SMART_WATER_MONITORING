@@ -1,0 +1,57 @@
+#define PH_PIN 34
+#define TURBIDITY_PIN 35
+
+int averageRead(int pin, int samples = 10) {
+  long sum = 0;
+  for (int i = 0; i < samples; i++) {
+    sum += analogRead(pin);
+    delay(10);
+  }
+  return sum / samples;
+}
+
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+
+  int phRaw  = averageRead(PH_PIN, 30);
+  int turbRaw = averageRead(TURBIDITY_PIN, 30);
+
+  float phVoltage  = phRaw * (3.3 / 4095.0);
+  float turbVoltage = turbRaw * (3.3 / 4095.0);
+
+  // pH formula (good starting calibration)
+  float pH = 7 + ((2.1 - phVoltage) / 0.18);
+
+  // Turbidity formula
+  float turbidityNTU = -1120.4 * turbVoltage * turbVoltage + 5742.3 * turbVoltage - 4352.9;
+
+  if (turbidityNTU < 0)
+    turbidityNTU = 0;
+
+  Serial.println("------ Water Quality ------");
+
+  Serial.print("pH Raw: ");
+  Serial.println(phRaw);
+
+  Serial.print("pH Voltage: ");
+  Serial.println(phVoltage, 3);
+
+  Serial.print("pH Value: ");
+  Serial.println(pH, 2);
+
+  Serial.print("Turbidity Raw: ");
+  Serial.println(turbRaw);
+
+  Serial.print("Turbidity Voltage: ");
+  Serial.println(turbVoltage, 3);
+
+  Serial.print("Turbidity (NTU): ");
+  Serial.println(turbidityNTU, 1);
+
+  Serial.println("--------------------------");
+
+  delay(2000);
+}

@@ -3,91 +3,79 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="emailphoto.css" />
-
     <title>Smart Water Monitoring - pH Details</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="ph-details.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html" class="protected-link">Dashboard</a>
-      <a href="contact.html">Contact</a>
-      <a href="login.html" class="login-btn">Login</a>
-    </nav>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button id="toggleBtn"><span class="material-icons" id="menu">menu</span></button>
+        <h2 id="welcomeUser" class="welcome-text">Welcome</h2>
+      </div>
+      <ul>
+        <li><a href="index.html"><span class="material-icons icon">home</span><span class="text">Home</span></a></li>
+        <li><a href="dashboard.html"><span class="material-icons icon">dashboard</span><span class="text">Dashboard</span></a></li>
+        <li class="active"><a href="ph-details.html"><span class="material-icons icon">show_chart</span><span class="text">pH</span></a></li>
+        <li><a href="turbidity-details.html"><span class="material-icons icon">bar_chart</span><span class="text">Turbidity</span></a></li>
+        <li><a href="contact.html"><span class="material-icons icon">call</span><span class="text">Contact</span></a></li>
+      </ul>
+      <div class="logout">
+        <a href="index.html""><span class="material-icons icon">logout</span><span class="text">Logout</span></a>
+      </div>
+    </aside>
 
-    <div id="statusMessage" class="status"></div>
+    <!-- Main Content -->
+    <main class="main">
+      <header class="header">
+        <h1>pH Monitoring Details</h1>
+        <p>Track acidity/alkalinity levels to ensure safe drinking water.</p>
+      </header>
 
-    <h1>pH Monitoring Details</h1>
+      <!-- Status -->
+      <section class="status" id="statusMessage">--</section>
 
-    <div class="chart-container">
-      <h2>pH Trend Over Time</h2>
-      <canvas id="phDetailChart"></canvas>
-    </div>
+      <!-- Chart -->
+      <section class="chart-card">
+        <h2>pH Trend Over Time</h2>
+        <canvas id="phDetailChart"></canvas>
+      </section>
 
-    <div class="suggestions">
-      <h2>Suggested Uses</h2>
-      <ul id="suggestionList"></ul>
-    </div>
+      <!-- Suggestions -->
+      <section class="card">
+        <h2>Suggested Uses</h2>
+        <ul id="suggestionList"></ul>
+      </section>
 
-    <div class="info">
-      <h2>Why pH Matters</h2>
-      <p>
-        pH tells us whether water is acidic or alkaline. Safe drinking water
-        should be between <strong>6.5 and 8.5</strong>. Outside this range,
-        water can corrode pipes, harm aquatic life, and even affect human
-        health. Monitoring pH ensures water is not only safe to drink but also
-        safe for cooking, cleaning, and everyday use.
-      </p>
-    </div>
+      <!-- Info -->
+      <section class="card">
+        <h2>Why pH Matters</h2>
+        <p>
+          pH tells us whether water is acidic or alkaline. Safe drinking water
+          should be between <strong>6.5 and 8.5</strong>. Outside this range,
+          water can corrode pipes, harm aquatic life, and even affect human
+          health. Monitoring pH ensures water is not only safe to drink but also
+          safe for cooking, cleaning, and everyday use.
+        </p>
+      </section>
 
-    <div class="footer">
-      <p>Smart Water Monitoring Project © 2026</p>
-      <p>
-        Connect to us:
-        <a
-          href="https://www.linkedin.com/in/amey-kapdi-215390396/"
-          target="_blank"
-          >Amey Kapdi</a
-        >
-        |
-        <a
-          href="https://www.linkedin.com/in/koushik-sharma-656820325/"
-          target="_blank"
-          >Koushik Sharma</a
-        >
-        |
-        <a
-          href="https://www.linkedin.com/in/swayam-prabhu-b1490a287/"
-          target="_blank"
-          >Swayam Prabhu</a
-        >
-        |
-        <a href="https://www.linkedin.com/in/jp-devx/" target="_blank"
-          >John Paul Fernandes</a
-        >
-        |
-        <a href="https://github.com/jpxdevx/IDEAS4.0" target="_blank">GitHub</a>
-        |
-      </p>
-    </div>
-    <iframe
-      src="chatbot.html"
-      style="
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 420px;
-        height: 600px;
-        border: none;
-        z-index: 9999;
-      "
-    >
-    </iframe>
+      <iframe
+        src="chatbot.html"
+        style="
+          position: fixed;
+          bottom: 0;
+          right: 0;
+          width: 420px;
+          height: 600px;
+          border: none;
+          z-index: 9999;
+        "
+      ></iframe>
+    </main>
+
+    <script type="module" src="auth.js"></script>
+    <script type="module" src="ph-details.js"></script>
   </body>
-  <script type="module" src="auth.js"></script>
-  <script type="module" src="ph-details.js"></script>
 </html>

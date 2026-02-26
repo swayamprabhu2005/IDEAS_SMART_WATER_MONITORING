@@ -8,186 +8,110 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let isLoggedIn = false;
 let currentUser = null;
 
-function pickColorFromString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+document.addEventListener("DOMContentLoaded", async () => {
+  const sidebar = document.getElementById("sidebar");
+  const toggleBtn = document.getElementById("toggleBtn");
+  const welcomeEl = document.getElementById("welcomeUser");
+
+  if (!sidebar || !toggleBtn) {
+    console.error("Sidebar or toggle button not found");
+    return;
   }
 
-  const group = Math.abs(hash) % 3;
-
-  switch (group) {
-    case 0:
-      return `hsl(${20 + (hash % 20)}, 85%, 60%)`;
-    case 1:
-      return `hsl(${220 + (hash % 40)}, 60%, 55%)`;
-    case 2:
-      return `hsl(${40 + (hash % 10)}, 50%, ${50 + (hash % 10)}%)`;
-    default:
-      return `hsl(200, 50%, 60%)`;
+  // Restore sidebar state
+  const savedState = localStorage.getItem("sidebarState");
+  if (savedState === "collapsed") {
+    sidebar.classList.add("collapsed");
+    welcomeEl.style.display = "none";
   }
-}
 
-function getDisplayName(user) {
-  const meta = user?.user_metadata || {};
-  return (
-    meta.full_name ||
-    meta.name ||
-    (user.email ? user.email.split("@")[0] : "User")
-  );
-}
-
-function createAvatarHtml(user) {
-  const displayName = getDisplayName(user);
-  const email = user.email || "";
-  const letter = (displayName?.[0] || "?").toUpperCase();
-  const bg = pickColorFromString(displayName || email || letter);
-
-  return `<div class="avatar-fallback" style="background:${bg}">${letter}</div>`;
-}
-
-async function guardProtectedPage() {
-  if (!document.body.dataset.protectedPage) return;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    window.location.href = "login.html";
-  }
-}
-
-function applyNavState(user) {
-  const loginBtnEl = document.querySelector(".login-btn");
-
-  const links = document.querySelectorAll(".protected-link");
-
-  links.forEach((el) => {
-    if (!el.dataset.guardAttached) {
-      el.addEventListener("click", function (e) {
-        if (!isLoggedIn) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          if (el.onclick) {
-            el.onclick = null;
-          }
-
-          window.location.href = "login.html";
-        }
-      });
-
-      el.dataset.guardAttached = "true";
+  // Collapse toggle
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+    if (sidebar.classList.contains("collapsed")) {
+      welcomeEl.style.display = "none";
+      localStorage.setItem("sidebarState", "collapsed");
+    } else {
+      welcomeEl.style.display = "block";
+      localStorage.setItem("sidebarState", "expanded");
     }
   });
 
-  if (!loginBtnEl) return;
+  // Fetch logged-in user
+  const { data, error } = await supabase.auth.getUser();
+  if (error) console.error("Error fetching user:", error);
+  const user = data?.user;
 
-  const newBtn = loginBtnEl.cloneNode(false);
-  newBtn.className = loginBtnEl.className;
-  loginBtnEl.parentNode.replaceChild(newBtn, loginBtnEl);
+  applyAuthState(user);
+  applyProtectedLinks(user);
+
+  // Subscribe to auth changes
+  supabase.auth.onAuthStateChange((_event, session) => {
+    const newUser = session?.user ?? null;
+    applyAuthState(newUser);
+    applyProtectedLinks(newUser);
+  });
+});
+
+// Update sidebar + welcome text based on auth state
+function applyAuthState(user) {
+  const sidebarBtn = document.querySelector(".logout a");
+  const sidebarIcon = sidebarBtn.querySelector(".material-icons.icon");
+  const sidebarText = sidebarBtn.querySelector(".text");
+  const welcomeEl = document.getElementById("welcomeUser");
 
   if (user) {
     isLoggedIn = true;
     currentUser = user;
 
-    const name = getDisplayName(user);
-    const email = user.email;
-    const avatarHtml = createAvatarHtml(user);
+    const meta = user.user_metadata || {};
+    const displayName =
+      meta.full_name ||
+      meta.name ||
+      (user.email ? user.email.split("@")[0] : "User");
 
-    newBtn.href = "#";
-    newBtn.innerHTML = `
-      <div class="user-menu">
-        <div class="user-trigger">
-          ${avatarHtml}
-          <span class="user-label">${name}</span>
-          <span class="chev">▾</span>
-        </div>
+    welcomeEl.textContent = `Welcome, ${displayName}`;
 
-        <div class="user-dropdown" role="menu" aria-hidden="true">
-          <div class="dropdown-head">
-            <div class="dropdown-avatar">${avatarHtml}</div>
-            <div class="dropdown-info">
-              <strong class="dropdown-name">${name}</strong>
-              <div class="dropdown-email">${email}</div>
-            </div>
-          </div>
-
-          <div class="dropdown-actions">
-            <button class="btn logout-btn pink-btn">Logout</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    const trigger = newBtn.querySelector(".user-trigger");
-    const dropdown = newBtn.querySelector(".user-dropdown");
-
-    trigger.addEventListener("click", (ev) => {
-      ev.preventDefault();
-      const hidden = dropdown.getAttribute("aria-hidden") === "true";
-      dropdown.setAttribute("aria-hidden", hidden ? "false" : "true");
-      dropdown.style.display = hidden ? "block" : "none";
-    });
-
-    const logoutBtn = newBtn.querySelector(".logout-btn");
-
-    logoutBtn.addEventListener("click", async (e) => {
+    sidebarIcon.textContent = "logout";
+    sidebarText.textContent = "Logout";
+    sidebarBtn.href = "#";
+    sidebarBtn.onclick = async (e) => {
       e.preventDefault();
-
       try {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
-
-        window.location.href = "index.html";
+        window.location.href = "index.html"; // redirect to homepage
       } catch (err) {
-        console.error("[auth] signOut failed", err);
+        console.error("[auth] sidebar signOut failed", err);
         alert("Logout failed: " + (err.message || err));
       }
-    });
-
-    document.addEventListener("click", (evt) => {
-      if (!newBtn.contains(evt.target)) {
-        dropdown.setAttribute("aria-hidden", "true");
-        dropdown.style.display = "none";
-      }
-    });
+    };
   } else {
     isLoggedIn = false;
     currentUser = null;
 
-    newBtn.textContent = "Login";
-    newBtn.href = "login.html";
+    welcomeEl.textContent = "Login to use features";
+
+    sidebarIcon.textContent = "login";
+    sidebarText.textContent = "Login";
+    sidebarBtn.href = "login.html";
+    sidebarBtn.onclick = null;
   }
 }
 
-async function refreshAuthState() {
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+// Guard protected links
+function applyProtectedLinks(user) {
+  const links = document.querySelectorAll(".protected-link");
 
-    applyNavState(user);
-  } catch (err) {
-    console.error("[auth] getUser failed", err);
-  }
-}
+  links.forEach((link) => {
+    link.onclick = null; // reset any previous handler
 
-function subscribeAuthChanges() {
-  supabase.auth.onAuthStateChange((_event, session) => {
-    const user = session?.user ?? null;
-    applyNavState(user);
+    if (!user) {
+      link.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = "login.html";
+      });
+    }
   });
 }
-
-document.addEventListener("DOMContentLoaded", async () => {
-  await guardProtectedPage();
-  await refreshAuthState();
-  subscribeAuthChanges();
-  if ("Notification" in window) {
-    if (Notification.permission === "default") {
-      await Notification.requestPermission();
-    }
-  }
-});

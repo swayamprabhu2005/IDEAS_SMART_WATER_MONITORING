@@ -1,8 +1,19 @@
-import { showWaterAlert } from "./notification.js";
-let phChart, turbidityChart, pieChart;
-let lastAlertTime = 0;
-let lastReadingId = null;
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
+const SUPABASE_URL = "https://oqbzbvkbqzpcuivsahkx.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xYnpidmticXpwY3VpdnNhaGt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MDk2MTMsImV4cCI6MjA3NDE4NTYxM30._bAXsOuz-xPbALqK9X0R5QKNZcwSzKCats3vMTfDGWs"; // replace with your anon key
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let phChart, turbidityChart, gaugeChart;
+let alertsCount = 0;
+
+document.addEventListener("DOMContentLoaded", async () => {
+  initCharts();
+  updateDashboard();
+  setInterval(updateDashboard, 5000);
+});
+
+// Fetch water data
 async function fetchData() {
   try {
     const res = await fetch("/api/readings");
@@ -16,59 +27,29 @@ async function fetchData() {
 function evaluateWaterSafety(latest) {
   const safePH = latest.pH >= 6.5 && latest.pH <= 8.5;
   const safeTurbidity = latest.turbidity < 5;
-
-  if (safePH && safeTurbidity)
-    return { safe: true, message: "✅ Water is SAFE to drink" };
-  else return { safe: false, message: "⚠️ Water is NOT safe to drink" };
+  return safePH && safeTurbidity;
 }
 
 function initCharts() {
   const ctxPh = document.getElementById("phChart").getContext("2d");
   phChart = new Chart(ctxPh, {
-    type: "line",
-    data: {
-      labels: [],
-      datasets: [
-        {
-          label: "pH Level",
-          data: [],
-          borderColor: "#005f99",
-          backgroundColor: "rgba(0,95,153,0.1)",
-          fill: true,
-        },
-      ],
-    },
+    type: 'bar',
+    data: { labels: [], datasets: [{ label: 'pH Level', data: [], borderColor: '#0599f5', backgroundColor: 'blue', fill: true }] },
+    options: { responsive: true }
   });
 
-  const ctxTurbidity = document
-    .getElementById("turbidityChart")
-    .getContext("2d");
+  const ctxTurbidity = document.getElementById("turbidityChart").getContext("2d");
   turbidityChart = new Chart(ctxTurbidity, {
-    type: "bar",
-    data: {
-      labels: [],
-      datasets: [
-        {
-          label: "Turbidity (NTU)",
-          data: [],
-          backgroundColor: "#4caf50",
-        },
-      ],
-    },
+    type: 'line',
+    data: { labels: [], datasets: [{ label: 'Turbidity (NTU)', data: [], borderColor: '#4caf50', fill: false }] },
+    options: { responsive: true }
   });
 
-  const ctxPie = document.getElementById("pieChart").getContext("2d");
-  pieChart = new Chart(ctxPie, {
-    type: "pie",
-    data: {
-      labels: ["pH Level", "Turbidity (NTU)"],
-      datasets: [
-        {
-          data: [],
-          backgroundColor: ["#005f99", "#4caf50"],
-        },
-      ],
-    },
+  const ctxGauge = document.getElementById("gaugeChart").getContext("2d");
+  gaugeChart = new Chart(ctxGauge, {
+    type: "doughnut",
+    data: { labels: ["Safe", "Unsafe"], datasets: [{ data: [1, 0], backgroundColor: ["#4caf50", "#f44336"], borderWidth: 0 }] },
+    options: { circumference: 180, rotation: -90, cutout: "70%", plugins: { legend: { display: false }, tooltip: { enabled: false } } }
   });
 }
 
@@ -76,41 +57,29 @@ async function updateDashboard() {
   const data = await fetchData();
   if (!data || data.length === 0) return;
 
-  const recentData = data.slice(-10);
+  // SORT like pH page
+  const ordered = data.sort((a, b) =>
+    new Date(a.timestamp) - new Date(b.timestamp)
+  );
+
+  const recentData = ordered.slice(-10);
   const latest = recentData[recentData.length - 1];
-  // ===== Browser Notification Alert =====
-  if (latest._id !== lastReadingId) {
-    lastReadingId = latest._id;
-
-    const unsafe = latest.pH < 6.5 || latest.pH > 8.5 || latest.turbidity >= 5;
-
-    if (unsafe) {
-      const now = Date.now();
-
-      // cooldown → prevents spam notifications
-      if (now - lastAlertTime > 60000) {
-        // 1 min
-        showWaterAlert(latest.pH, latest.turbidity);
-        lastAlertTime = now;
-      }
-    }
-  }
 
   document.getElementById("current-pH").textContent = latest.pH.toFixed(2);
   document.getElementById("current-turbidity").textContent =
     latest.turbidity.toFixed(2) + " NTU";
 
+  const safe = evaluateWaterSafety(latest);
   const statusDiv = document.getElementById("statusMessage");
-  const safety = evaluateWaterSafety(latest);
-  statusDiv.textContent = safety.message;
-  statusDiv.className = safety.safe ? "status safe" : "status unsafe";
+  statusDiv.textContent = safe ? "✅ Safe" : "⚠️ Unsafe";
+  statusDiv.style.color = safe ? "#4caf50" : "#f44336";
 
-  const labels = recentData.map((d) =>
-    d.timestamp ? new Date(d.timestamp).toLocaleTimeString() : "",
+  const labels = recentData.map(d =>
+    new Date(d.timestamp).toLocaleTimeString()
   );
 
-  const phData = recentData.map((d) => d.pH);
-  const turbidityData = recentData.map((d) => d.turbidity);
+  const phData = recentData.map(d => d.pH);
+  const turbidityData = recentData.map(d => d.turbidity);
 
   phChart.data.labels = labels;
   phChart.data.datasets[0].data = phData;
@@ -120,10 +89,6 @@ async function updateDashboard() {
   turbidityChart.data.datasets[0].data = turbidityData;
   turbidityChart.update();
 
-  pieChart.data.datasets[0].data = [latest.pH, latest.turbidity];
-  pieChart.update();
+  gaugeChart.data.datasets[0].data = safe ? [1, 0] : [0, 1];
+  gaugeChart.update();
 }
-
-initCharts();
-updateDashboard();
-setInterval(updateDashboard, 2000);

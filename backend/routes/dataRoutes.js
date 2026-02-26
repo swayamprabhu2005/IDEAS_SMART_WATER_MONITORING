@@ -40,7 +40,7 @@ router.post("/data", async (req, res) => {
 router.get("/readings", async (req, res) => {
     try {
         const readings = await Reading.find()
-            .sort({ timestamp: 1 })
+            .sort({ timestamp: -1 })  // newest first
             .limit(50);
 
         res.json(readings);

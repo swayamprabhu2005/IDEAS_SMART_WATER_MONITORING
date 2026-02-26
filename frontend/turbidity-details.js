@@ -9,13 +9,15 @@ function initChart() {
     const ctx = document.getElementById('turbidityDetailChart').getContext('2d');
 
     turbidityChart = new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: [],
             datasets: [{
                 label: 'Turbidity (NTU)',
                 data: [],
-                backgroundColor: '#4caf50'
+                borderColor: '#69450269',
+                backgroundColor: '#4caf4f35',
+                fill: true
             }]
         }
     });
@@ -30,6 +32,8 @@ async function updateChart() {
     
     if (!data || data.length === 0)
         console.log("Data not found!!");
+
+    const ordered = data.reverse();
 
     const recent = data.slice(-10);
     const latest = recent[recent.length - 1];

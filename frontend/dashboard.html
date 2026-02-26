@@ -1,112 +1,68 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="emailphoto.css" />
-
-    <title>Smart Water Monitoring - Dashboard</title>
-
-    <!-- Chart link -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <link rel="stylesheet" href="dashboard.css" />
-  </head>
-  <body>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html" class="protected-link">Dashboard</a>
-      <a href="contact.html">Contact</a>
-      <a href="login.html" class="login-btn">Login</a>
-    </nav>
-    <div class="header">
-      <h1>Smart Water Monitoring Dashboard</h1>
-      <p>Click on any reading below to see full details and stats.</p>
-    </div>
-
-    <div id="statusMessage" class="status"></div>
-
-    <h2>Latest Water Check</h2>
-    <div class="current-readings">
-      <div
-        class="reading-card protected-link"
-        onclick="window.location.href = 'ph-details.html'"
-      >
-        <div class="icon">🧪</div>
-        <h3>Water Quality Level (pH)</h3>
-        <p id="current-pH">--</p>
-        <div class="description">Safe range: 6.5 to 8.5</div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Water Monitoring Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button id="toggleBtn"><span class="material-icons" id="menu">menu</span></button>
+        <h2 id="welcomeUser" class="welcome-text">Welcome</h2>
       </div>
-      <div
-        class="reading-card protected-link"
-        onclick="window.location.href = 'turbidity-details.html'"
-      >
-        <div class="icon">🌊</div>
-        <h3>Cloudiness (Turbidity)</h3>
-        <p id="current-turbidity">-- NTU</p>
-        <div class="description">Safe range: < 5</div>
+      <ul>
+        <li><a href="index.html"><span class="material-icons icon">home</span><span class="text">Home</span></a></li>
+        <li class="active"><a href="dashboard.html" class="protected-link"><span class="material-icons icon">dashboard</span><span class="text">Dashboard</span></a></li>
+        <li><a href="ph-details.html" class="protected-link"><span class="material-icons icon">show_chart</span><span class="text">pH</span></a></li>
+        <li><a href="turbidity-details.html" class="protected-link"><span class="material-icons icon">bar_chart</span><span class="text">Turbidity</span></a></li>
+        <li><a href="contact.html"><span class="material-icons icon">call</span><span class="text">Contact</span></a></li>
+      </ul>
+      <div class="logout">
+        <a href="index.html""><span class="material-icons icon">logout</span><span class="text">Logout</span></a>
       </div>
-    </div>
-    <h2>Water Trends Over Time</h2>
-    <div class="dashboard">
-      <div class="chart-container">
-        <h3>pH Trend</h3>
-        <canvas id="phChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <h3>Turbidity Trend</h3>
-        <canvas id="turbidityChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <h3>Current Readings Summary</h3>
-        <canvas id="pieChart"></canvas>
-      </div>
-    </div>
+    </aside>
 
-    <div class="footer">
-      <p>Smart Water Monitoring Project © 2026</p>
-      <p>
-        Connect to us:
-        <a
-          href="https://www.linkedin.com/in/amey-kapdi-215390396/"
-          target="_blank"
-          >Amey Kapdi</a
-        >
-        |
-        <a
-          href="https://www.linkedin.com/in/koushik-sharma-656820325/"
-          target="_blank"
-          >Koushik Sharma</a
-        >
-        |
-        <a
-          href="https://www.linkedin.com/in/swayam-prabhu-b1490a287/"
-          target="_blank"
-          >Swayam Prabhu</a
-        >
-        |
-        <a href="https://www.linkedin.com/in/jp-devx/" target="_blank"
-          >John Paul Fernandes</a
-        >
-        |
-        <a href="https://github.com/jpxdevx/IDEAS4.0" target="_blank">GitHub</a>
-        |
-      </p>
-    </div>
+  <!-- Main Content -->
+  <main class="main">
+    <header class="header">
+      <h1>Smart Water Monitoring</h1>
+      <p>Real-time water quality dashboard</p>
+    </header>
+
+    <!-- Widgets -->
+    <section class="widgets">
+      <div class="widget"><h3>Latest pH</h3><p id="current-pH">--</p></div>
+      <div class="widget"><h3>Latest Turbidity</h3><p id="current-turbidity">-- NTU</p></div>
+      <div class="widget"><h3>Status</h3><p id="statusMessage">--</p></div>
+      <div class="widget"><h3>Alerts Sent</h3><p id="alertsCount">0</p></div>
+    </section>
+
+    <!-- Charts -->
+    <section class="charts">
+      <div class="chart-card"><h3>pH Trend</h3><canvas id="phChart"></canvas></div>
+      <div class="chart-card"><h3>Turbidity Trend</h3><canvas id="turbidityChart"></canvas></div>
+      <div class="chart-card"><h3>Safety Gauge</h3><canvas id="gaugeChart"></canvas></div>
+    </section>
+
     <iframe
-      src="chatbot.html"
-      style="
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 420px;
-        height: 600px;
-        border: none;
-        z-index: 9999;
-      "
-    >
-    </iframe>
-  </body>
-  <script type="module" src="auth.js"></script>
+        src="chatbot.html"
+        style="
+          position: fixed;
+          bottom: 0;
+          right: 0;
+          width: 420px;
+          height: 600px;
+          border: none;
+          z-index: 9999;
+        "
+      ></iframe>
+
+    <script type="module" src="auth.js"></script>
   <script type="module" src="dashboard.js"></script>
+</body>
 </html>

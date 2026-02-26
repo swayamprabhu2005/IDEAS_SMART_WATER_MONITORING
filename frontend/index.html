@@ -4,48 +4,62 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Smart Water Monitoring - Home</title>
-    <link rel="stylesheet" href="emailphoto.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <nav class="nav">
-      <a href="index.html">Home</a>
-      <a href="dashboard.html" class="protected-link">Dashboard</a>
-      <a href="contact.html">Contact</a>
-      <a href="login.html" class="login-btn">Login</a>
-    </nav>
-    <div class="container">
-      <h1>Welcome to Smart Water Monitoring</h1>
-      <p>
-        Track your water quality in real-time. Get instant alerts when
-        contamination is detected.
-      </p>
-      <a href="dashboard.html" class="btn">Go to Dashboard</a>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <button id="toggleBtn"><span class="material-icons" id="menu">menu</span></button>
+        <h2 id="welcomeUser" class="welcome-text">Welcome</h2>
+      </div>
+      <ul>
+        <li class="active"><a href="index.html"><span class="material-icons icon">home</span><span class="text">Home</span></a></li>
+        <li><a href="dashboard.html" class="protected-link"><span class="material-icons icon">dashboard</span><span class="text">Dashboard</span></a></li>
+        <li><a href="ph-details.html" class="protected-link"><span class="material-icons icon">show_chart</span><span class="text">pH</span></a></li>
+        <li><a href="turbidity-details.html" class="protected-link"><span class="material-icons icon">bar_chart</span><span class="text">Turbidity</span></a></li>
+        <li><a href="contact.html"><span class="material-icons icon">call</span><span class="text">Contact</span></a></li>
+      </ul>
+      <div class="logout">
+        <a href="index.html""><span class="material-icons icon">logout</span><span class="text">Logout</span></a>
+      </div>
+    </aside>
 
-      <div class="cards">
-        <div class="card">
-          <h2>pH Monitoring</h2>
-          <p>Check acidity/alkalinity levels to ensure safe drinking water.</p>
-        </div>
-        <div class="card">
-          <h2>Turbidity Monitoring</h2>
-          <p>Detect suspended particles and contamination instantly.</p>
+    <!-- Main Content -->
+    <main class="main">
+      <div class="container">
+        <h1>Welcome to Smart Water Monitoring</h1>
+        <p>
+          Track your water quality in real-time. Get instant alerts when
+          contamination is detected.
+        </p>
+        <a href="dashboard.html" class="btn protected-link">Go to Dashboard</a>
+
+        <div class="cards">
+          <div class="card">
+            <h2>pH Monitoring</h2>
+            <p>Check acidity/alkalinity levels to ensure safe drinking water.</p>
+          </div>
+          <div class="card">
+            <h2>Turbidity Monitoring</h2>
+            <p>Detect suspended particles and contamination instantly.</p>
+          </div>
         </div>
       </div>
-    </div>
-    <iframe
-      src="chatbot.html"
-      style="
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 420px;
-        height: 600px;
-        border: none;
-        z-index: 9999;
-      "
-    >
-    </iframe>
+      <iframe
+        src="chatbot.html"
+        style="
+          position: fixed;
+          bottom: 0;
+          right: 0;
+          width: 420px;
+          height: 600px;
+          border: none;
+          z-index: 9999;
+        "
+      ></iframe>
+    </main>
+    <script type="module" src="auth.js"></script>
   </body>
-  <script type="module" src="auth.js"></script>
 </html>
