@@ -64,11 +64,7 @@ void loop() {
   // Calibrated pH formula
   float pH = 7 + ((1.9 - phVoltage) * 9.5);
 
-  // Turbidity formula
- // float turbidityNTU = TURB_A * turbVoltage * turbVoltage +
-  //                     TURB_B * turbVoltage +
-  //                     TURB_C;
-
+  // Calibrated turbidity formula
   float turbidityNTU = (3.3 - turbVoltage) * 300;
 
   if (turbidityNTU < 0)

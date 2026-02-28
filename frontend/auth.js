@@ -46,10 +46,23 @@ document.addEventListener("DOMContentLoaded", async () => {
   applyProtectedLinks(user);
 
   // Subscribe to auth changes
-  supabase.auth.onAuthStateChange((_event, session) => {
+  supabase.auth.onAuthStateChange(async (_event, session) => {
     const newUser = session?.user ?? null;
+
     applyAuthState(newUser);
     applyProtectedLinks(newUser);
+
+    if (newUser) {
+      try {
+        await fetch("/api/mark-active", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: newUser.email }),
+        });
+      } catch (err) {
+        console.error("Failed to mark user active:", err);
+      }
+    }
   });
 });
 

@@ -4,13 +4,23 @@ const SUPABASE_URL = "https://oqbzbvkbqzpcuivsahkx.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xYnpidmticXpwY3VpdnNhaGt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2MDk2MTMsImV4cCI6MjA3NDE4NTYxM30._bAXsOuz-xPbALqK9X0R5QKNZcwSzKCats3vMTfDGWs"; // replace with your anon key
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+import { showWaterAlert, requestNotificationPermission } from "./notification.js";
 let phChart, turbidityChart, gaugeChart;
 let alertsCount = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
+
+  // Ask notification permission
+  await requestNotificationPermission();
+
   initCharts();
   updateDashboard();
+
+  // Dashboard updates every 5 seconds
   setInterval(updateDashboard, 5000);
+
+  // Notification check every 5 minutes
+  setInterval(checkAndNotify, 2 * 60 * 1000);
 });
 
 // Fetch water data
@@ -91,4 +101,20 @@ async function updateDashboard() {
 
   gaugeChart.data.datasets[0].data = safe ? [1, 0] : [0, 1];
   gaugeChart.update();
+}
+async function checkAndNotify() {
+  const data = await fetchData();
+  if (!data || data.length === 0) return;
+
+  // Get latest reading
+  const latest = data.sort((a, b) =>
+    new Date(b.timestamp) - new Date(a.timestamp)
+  )[0];
+
+  const safe = evaluateWaterSafety(latest);
+
+  // Only notify if unsafe
+  if (!safe) {
+    showWaterAlert(latest.pH, latest.turbidity);
+  }
 }
