@@ -1,21 +1,22 @@
 Smart Water Monitoring System is an IoT-enabled water quality monitoring platform that:
 
-● Collects real-time pH and Turbidity data
+● Collects real-time pH and Turbidity data.
 
-● Sends sensor readings using ESP32 over WiFi
+● Sends sensor readings using ESP32 over WiFi.
 
-● Stores data in MongoDB
+● Stores data in MongoDB.
 
-● Displays analytics using a dynamic web dashboard
+● Displays analytics using a dynamic web dashboard.
 
-● Applies K-Means clustering to classify water quality
+● Applies K-Means clustering to classify water quality.
 
-● Provides safety evaluation based on WHO standards
+● Provides safety evaluation based on WHO standards.
+
+● Sends emails after specific time intervals to keep users notified about the water quality.
 
 ● This project bridges hardware + IoT + backend + frontend + data science into one integrated system.
 
-![CONNECTIONS](https://github.com/user-attachments/assets/7775fc7f-e3b0-4fa4-88d3-05eb9224085f)
-
+![CONNECTIONS](https://github.com/user-attachments/assets/3e023a20-843e-4cc0-9877-b664056ade99)
 I) Hardware Layer
    1) ESP32 Microcontroller
     
